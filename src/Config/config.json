@@ -1,0 +1,28 @@
+{
+  "square_size": 30,
+  "board_color": [50, 50, 50],
+  "piece_colors": {
+    "Line": [0, 255, 255],
+    "O": [255, 255, 0],
+    "T": [128, 0, 128],
+    "S": [0, 255, 0],
+    "Z": [255, 0, 0],
+    "J": [0, 0, 255],
+    "L": [255, 165, 0],
+    "Bomb": [0, 0, 0]
+  },
+  "game_board_rows": 20,
+  "game_board_cols": 10,
+  "score_board_size_x": 160,
+  "score_board_size_y": 80,
+  "next_piece_hint_x": 160,
+  "next_piece_hint_y": 160,
+  "piece_holder_x": 160,
+  "piece_holder_y": 160,
+  "ability_icon_x": 160,
+  "ability_icon_y": 160,
+  "ability_image_size": 100,
+  "menu_option_x": 200,
+  "menu_option_y": 100,
+  "menu_option_spacing": 130
+}
