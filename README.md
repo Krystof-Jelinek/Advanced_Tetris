@@ -49,7 +49,7 @@ python main.py
 #### Windows Standalone Version
 If you are on Windows and prefer to run the game without installing Python or any dependencies, you can download the pre-compiled standalone executable here:
 
-[Download .exe file](https://drive.google.com/file/d/1cmamcII9EuKU86f3oFSCVhNXQnwwAKa9/view)
+[Download .exe file](https://github.com/Krystof-Jelinek/Advanced_Tetris/releases/latest/download/Tetris.exe)
 
 ## Controls
 
