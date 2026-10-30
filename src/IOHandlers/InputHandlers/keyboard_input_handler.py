@@ -18,11 +18,11 @@ from src.IOHandlers.InputHandlers.input_handler import InputHandler
 
 class KeyboardInputHandler(InputHandler):
     """
-    Processes keyboard events, manages key repeat logic, and issues commands to the GameManager.
+    Maps keyboard keys to commands; the press/repeat logic is inherited from InputHandler.
     """
     def __init__(self, game_manager: "GameManager"):
-        """Initializes the keyboard handler with a command map and internal state."""
-        self.game_manager = game_manager
+        """Initializes the keyboard handler with a command map."""
+        super().__init__(game_manager)
         self.key_map = {
             key.LEFT: MoveLeftCommand(),
             key.RIGHT: MoveRightCommand(),
@@ -34,35 +34,18 @@ class KeyboardInputHandler(InputHandler):
             key.Q: UseAbilityCommand(0),
             key.E: UseAbilityCommand(1),
         }
-        self.key_state = {}  # tracks keys that are currently pressed
-        self.repeat_timer = {}   # time since first press
-        self.initial_delay = 0.3  # seconds before repeating
-        self.repeat_rate = 0.05
+
+    def get_command(self, input_id):
+        """Returns the command mapped to the given key symbol."""
+        return self.key_map.get(input_id)
 
     def on_key_press(self, symbol, _modifiers):
-        """Processes key press events and starts the repeat timer."""
-        if symbol not in self.key_state:
-            self.key_state[symbol] = True
-            self.repeat_timer[symbol] = -self.initial_delay  # negativní start = počká 0.3 s
-            command = self.key_map.get(symbol)
-            if command:
-                self.game_manager.handle_command(command)
+        """Forwards a key press to the shared press logic."""
+        self.on_press(symbol)
 
     def on_key_release(self, symbol, _modifiers):
-        """Processes key release events and stops the repeat timer."""
-        if symbol in self.key_state:
-            self.key_state.pop(symbol)
-            self.repeat_timer.pop(symbol, None)
-
-    def poll(self, dt):
-        """Updates repeat timers and issues repeated commands while keys are held."""
-        for symbol in list(self.key_state):
-            self.repeat_timer[symbol] += dt
-            if self.repeat_timer[symbol] >= 0:
-                command = self.key_map.get(symbol)
-                if command:
-                    self.game_manager.handle_command(command)
-                self.repeat_timer[symbol] -= self.repeat_rate
+        """Forwards a key release to the shared release logic."""
+        self.on_release(symbol)
 
     # speciall methods for input if the gamestate requires and provides it
     def on_text(self, text):

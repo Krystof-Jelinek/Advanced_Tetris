@@ -1,2 +1,15 @@
 [tool.pytest.ini_options]
 pythonpath = ["."]
+
+[tool.pylint."messages control"]
+disable = ["cyclic-import", "duplicate-code"]
+
+[tool.pylint.format]
+max-line-length = 160
+
+[tool.pylint.basic]
+module-rgx = "(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]*))$"
+
+[tool.pylint.design]
+max-attributes = 12
+min-public-methods = 1
