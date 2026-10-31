@@ -14,7 +14,7 @@ from src.GameComponents.TetrisSquares.time_locked_square import TimeLockedSquare
 from src.GameComponents.game_component import GameComponent
 from src.Renderers.GameComponentRenderers.game_board_renderer import GameBoardRenderer
 from src.Utils.dummy_list import DummyList
-
+from src.Mementos.game_board_memento import GameBoardMemento
 
 class GameBoard(GameComponent):
     """
@@ -120,6 +120,14 @@ class GameBoard(GameComponent):
             for col in range(self.cols):
                 if self.grid[row][col].color != board[row][col].color:
                     self.grid[row][col].color = board[row][col].color
+
+    def create_memento(self) -> GameBoardMemento:
+        """Memento: saves the current grid as clones of all squares."""
+        return GameBoardMemento(list(list(square.clone() for square in row) for row in self.grid))
+
+    def restore(self, memento: GameBoardMemento):
+        """Memento: puts the saved grid back, cloning again so the memento itself stays unchanged."""
+        self.grid = [[square.clone() for square in row] for row in memento.squares]
 
     def get_renderer(self, batch: Batch) -> "GameBoardRenderer":
         """Returns the renderer for the game board."""

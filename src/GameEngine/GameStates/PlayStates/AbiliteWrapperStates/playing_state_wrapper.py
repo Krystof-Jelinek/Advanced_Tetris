@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING
 from pyglet.graphics import Batch
 
 from src.GameEngine.GameStates.PlayStates.playing_state import PlayingState
+from src.Mementos.playing_state_memento import PlayingStateMemento
+
 if TYPE_CHECKING:
     from src.GameComponents.TetrisPieces.tetris_piece import TetrisPiece
     from src.GameEngine.GameStates.game_state import GameState
@@ -84,6 +86,14 @@ class PlayingStateWrapper(PlayingState):
     def is_ability_wrappable(self) -> bool:
         """Forwards the wrappable check to the wrapped state."""
         return self._wrapped.is_ability_wrappable()
+
+    def create_memento(self) -> "PlayingStateMemento":
+        """Forwards memento creation to the wrapped state."""
+        return self._wrapped.create_memento()
+
+    def restore(self, memento: "PlayingStateMemento"):
+        """Forwards the restore to the wrapped state, so the data lands in the real PlayingState."""
+        return self._wrapped.restore(memento)
 
     def __getattr__(self, name):
         """Forwards attribute access to the wrapped state for any non-overridden attributes."""

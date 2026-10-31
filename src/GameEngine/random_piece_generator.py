@@ -12,6 +12,7 @@ from src.GameComponents.TetrisPieces.s_piece import SPiece
 from src.GameComponents.TetrisPieces.t_piece import TPiece
 from src.GameComponents.TetrisPieces.tetris_piece import TetrisPiece
 from src.GameComponents.TetrisPieces.z_piece import ZPiece
+from src.Mementos.random_piece_generator_memento import RandomPieceGeneratorMemento
 
 
 class RandomPieceGenerator:
@@ -54,3 +55,12 @@ class RandomPieceGenerator:
         piece_class = self.peek_next_piece_class()
         # Use default preview position (you can customize)
         return piece_class(center_row=0, center_col=0)
+
+    def create_memento(self) -> RandomPieceGeneratorMemento:
+        """Memento: saves the remaining bag and the state of the random generator."""
+        return RandomPieceGeneratorMemento(tuple(self.bag), self.random.getstate())
+
+    def restore(self, memento: RandomPieceGeneratorMemento):
+        """Memento: puts the saved bag and random state back, so the same pieces come next again."""
+        self.bag = list(memento.bag)
+        self.random.setstate(memento.random_state)

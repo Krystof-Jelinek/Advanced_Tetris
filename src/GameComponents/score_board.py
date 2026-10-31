@@ -12,6 +12,7 @@ from src.GameEngine.GameEvents.event_bus import EventBus
 from src.GameEngine.GameEvents.events import GameEvent
 from src.Renderers.renderer import Renderer
 from src.Renderers.GameComponentRenderers.score_board_renderer import ScoreBoardRenderer
+from src.Mementos.score_board_memento import ScoreBoardMemento
 
 
 class ScoreBoard(GameComponent):
@@ -51,6 +52,14 @@ class ScoreBoard(GameComponent):
         """Adds score for manual soft dropping a piece."""
         # Every manual drop gives 1 point
         self.score += 1
+
+    def create_memento(self) -> ScoreBoardMemento:
+        """Memento: saves the current score."""
+        return ScoreBoardMemento(self.score)
+
+    def restore(self, memento: ScoreBoardMemento):
+        """Memento: puts the saved score back."""
+        self.set_score(memento.score)
 
     def get_renderer(self, batch: Batch) -> Renderer:
         """Returns the renderer for the scoreboard."""

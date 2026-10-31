@@ -1,6 +1,8 @@
 """
 This module contains the core PlayingState class which manages the Tetris gameplay logic.
 """
+from dataclasses import replace
+
 from pyglet.graphics import Batch
 
 from src.Config.difficulty_settings import DifficultySettings
@@ -26,6 +28,7 @@ from src.GameEngine.random_piece_generator import RandomPieceGenerator
 from src.IOHandlers.OutputHandlers.audio_handler import audio_handler
 from src.Renderers.GameStateRenderers.playing_state_renderer import PlayingStateRenderer
 from src.Renderers.renderer import Renderer
+from src.Mementos.playing_state_memento import PlayingStateMemento
 
 
 # pylint: disable=too-many-public-methods
@@ -245,6 +248,28 @@ class PlayingState(GameState):
     def is_ability_wrappable(self) -> bool:
         """Indicates that this state can be wrapped for ability effects."""
         return True
+
+    def create_memento(self) -> PlayingStateMemento:
+        """Memento: saves the whole game by collecting the mementos of its components."""
+        return PlayingStateMemento(
+            board=self.board.create_memento(),
+            current_piece=self.current_piece.clone(),
+            piece_holder=self.piece_holder.create_memento(),
+            piece_generator=self.piece_generator.create_memento(),
+            score_board=self.score_board.create_memento(),
+            difficulty=replace(self.difficulty),
+        )
+
+    def restore(self, memento: PlayingStateMemento):
+        """Memento: hands every component its saved state back, then refreshes what is derived from them."""
+        self.board.restore(memento.board)
+        self.piece_holder.restore(memento.piece_holder)
+        self.piece_generator.restore(memento.piece_generator)
+        self.score_board.restore(memento.score_board)
+        self.difficulty = replace(memento.difficulty)
+
+        self.set_current_piece(memento.current_piece.clone())  # also points the shadow piece at it
+        self.next_piece_hint.set_piece(self.piece_generator.peek_next_piece())
 
     def get_renderer(self, batch: Batch) -> "Renderer":
         """Returns the renderer for the playing state."""

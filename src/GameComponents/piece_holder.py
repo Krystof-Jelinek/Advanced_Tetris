@@ -11,6 +11,7 @@ from src.GameComponents.TetrisPieces.tetris_piece import TetrisPiece
 from src.GameComponents.game_component import GameComponent
 from src.Renderers.GameComponentRenderers.piece_holder_renderer import PieceHolderRenderer
 from src.Renderers.renderer import Renderer
+from src.Mementos.piece_holder_memento import PieceHolderMemento
 
 
 class PieceHolder(GameComponent):
@@ -52,6 +53,16 @@ class PieceHolder(GameComponent):
     def reset_swap(self):
         """Resets the swap lock, allowing a new swap in the next turn."""
         self._swapped_this_turn = False
+
+    def create_memento(self) -> PieceHolderMemento:
+        """Memento: saves a clone of the held piece and whether a swap was already used this turn."""
+        held_piece = self.piece.clone() if self.piece is not None else None
+        return PieceHolderMemento(held_piece, self._swapped_this_turn)
+
+    def restore(self, memento: PieceHolderMemento):
+        """Memento: puts the saved held piece and swap lock back, cloning the piece again."""
+        self.piece = memento.held_piece.clone() if memento.held_piece is not None else None
+        self._swapped_this_turn = memento.swapped_this_turn
 
     def get_renderer(self, batch: Batch) -> "Renderer":
         """Returns the renderer for the piece holder."""
