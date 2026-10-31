@@ -1,6 +1,7 @@
 """
 This module defines the abstract base class for all Tetris pieces.
 """
+import copy
 from typing import TYPE_CHECKING
 
 from pyglet.graphics import Batch
@@ -11,12 +12,13 @@ from src.GameComponents.game_component import GameComponent
 from src.Renderers.renderer import Renderer
 from src.Renderers.GameComponentRenderers.tetris_piece_renderer import TetrisPieceRenderer
 from src.Utils.offset import Offset
+from src.Utils.prototype import Prototype
 
 if TYPE_CHECKING:
     from src.GameEngine.GameStates.PlayStates.playing_state import PlayingState
 
 
-class TetrisPiece(GameComponent):
+class TetrisPiece(GameComponent, Prototype):
     """
     Base class representing a Tetris piece composed of multiple squares.
     """
@@ -37,16 +39,13 @@ class TetrisPiece(GameComponent):
         """Returns the rotation kick offsets for the piece."""
         return self.kicks
 
-    def copy(self) -> "TetrisPiece":
-        """Creates and returns a copy of the Tetris piece."""
-        new_piece = TetrisPiece(
-            self.center_square.grid_row,
-            self.center_square.grid_col,
-            [(sq.relative_row, sq.relative_col) for sq in self.relative_squares],
-            self.color,
-            self.kicks.copy()
-        )
-        return new_piece
+    def clone(self) -> "TetrisPiece":
+        """Prototype: returns an independent copy of this piece with its own squares."""
+        piece = copy.copy(self)
+        piece.center_square = self.center_square.clone()
+        piece.relative_squares = [square.clone() for square in self.relative_squares]
+        piece.kicks = list(self.kicks)
+        return piece
 
     # ----------------------------
     # Movement

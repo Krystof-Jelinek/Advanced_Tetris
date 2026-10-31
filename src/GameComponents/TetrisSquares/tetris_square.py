@@ -3,6 +3,7 @@ This module defines the abstract base class for all squares on the Tetris board.
 """
 from abc import abstractmethod
 from typing import Tuple
+import copy
 
 from pyglet.graphics import Batch
 from pyglet.shapes import Rectangle, BorderedRectangle
@@ -10,9 +11,10 @@ from pyglet.shapes import Rectangle, BorderedRectangle
 from src.GameComponents.game_component import GameComponent
 from src.Renderers.renderer import Renderer
 from src.Renderers.TetrisSquareRenderers.tetris_square_renderer import TetrisSquareRenderer
+from src.Utils.prototype import Prototype
 
 
-class TetrisSquare(GameComponent):
+class TetrisSquare(GameComponent, Prototype):
     """
     Abstract base class for board and piece squares.
     """
@@ -66,3 +68,10 @@ class TetrisSquare(GameComponent):
     def is_scorable(self) -> bool:
         """Returns True if clearing this square contributes to the player's score."""
         return True
+
+
+    def clone(self) -> "TetrisSquare":
+        """Prototype: returns an independent copy of this square (same class) without its render object."""
+        square = copy.copy(self)
+        square.render_rect = None
+        return square

@@ -13,7 +13,7 @@ A Tetris implementation written in Python using Pyglet. This project includes cl
 
 ## Prerequisites
 
-*   **Python 3.10+**
+*   **Python 3.11+**
 *   **Pyglet**: A cross-platform windowing and multimedia library for Python.
 
 ## Installation

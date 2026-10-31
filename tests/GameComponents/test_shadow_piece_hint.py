@@ -10,20 +10,20 @@ from src.GameComponents.game_board import GameBoard
 def test_shadow_piece_hint_initialization():
     """Test initial state of the shadow piece hint."""
     piece = MagicMock(spec=TetrisPiece)
-    piece.copy.return_value = MagicMock(spec=TetrisPiece)
+    piece.clone.return_value = MagicMock(spec=TetrisPiece)
     board = MagicMock(spec=GameBoard)
 
     hint = ShadowPieceHint(piece, board)
     assert hint.piece == piece
     assert hint.board == board
-    piece.copy.assert_called_once()
+    piece.clone.assert_called_once()
 
 
 def test_shadow_piece_hint_update_position():
     """Test that the shadow piece position is calculated correctly."""
     piece = MagicMock(spec=TetrisPiece)
     ghost = MagicMock(spec=TetrisPiece)
-    piece.copy.return_value = ghost
+    piece.clone.return_value = ghost
     board = MagicMock(spec=GameBoard)
 
     hint = ShadowPieceHint(piece, board)
