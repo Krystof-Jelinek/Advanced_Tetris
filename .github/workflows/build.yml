@@ -20,7 +20,7 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        run: python -m pip install pyglet pytest pyinstaller
+        run: python -m pip install -r requirements-dev.txt
 
       - name: Run tests
         run: python -m pytest

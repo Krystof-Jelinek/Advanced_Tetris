@@ -5,7 +5,12 @@ A Tetris implementation written in Python using Pyglet. This project includes cl
 ## Features
 
 *   **Classic Tetris Gameplay**: Standard block-stacking action with increasing difficulty.
-*   **Ability System**: Use special abilities like "Bomb", "Slow Time", and "Speed Up" to gain an advantage.
+*   **Ability System**: Pick two abilities before the game starts. An ability is charged by clearing enough lines at once (3 or 4) and used with **Q** / **E**:
+    *   **Slow Time**: slows down your own game for 10 seconds.
+    *   **Bomb**: turns the current piece into a bomb that blows up the blocks around it.
+    *   **Rewind Time**: plays the last 10 seconds of the game backwards and lets you continue from there. Ability charges are not rewound.
+    *   **Speed Up** (multiplayer): speeds up the opponent's game.
+    *   **Garbage Lines** (multiplayer): sends locked garbage lines to the bottom of the opponent's board.
 *   **LAN Multiplayer**: Connect with friends over a local network (Client-Server architecture).
 *   **Controller Support**: Play with a game controller (e.g. PS5 DualSense) using the D-pad or the left stick, alongside the keyboard.
 *   **Audio**: Integrated sound effects for game events.
@@ -14,14 +19,14 @@ A Tetris implementation written in Python using Pyglet. This project includes cl
 ## Prerequisites
 
 *   **Python 3.11+**
-*   **Pyglet**: A cross-platform windowing and multimedia library for Python.
+*   **Pyglet**: A cross-platform windowing and multimedia library for Python (the exact version is pinned in `requirements.txt`).
 
 ## Installation
 
 1.  Clone the repository:
     ```bash
     git clone <repository_url>
-    cd Jelinkry
+    cd repo
     ```
 
 2.  (Optional) Create and activate a virtual environment:
@@ -35,7 +40,12 @@ A Tetris implementation written in Python using Pyglet. This project includes cl
 
 3.  Install the required dependencies:
     ```bash
-    pip install pyglet
+    python -m pip install -r requirements.txt
+    ```
+
+4.  (Optional) For development, install the tools for tests, linting and building the `.exe` as well:
+    ```bash
+    python -m pip install -r requirements-dev.txt
     ```
 
 ## Usage
@@ -75,12 +85,27 @@ If the game does not react to the controller, close Steam (Steam Input can take 
 python -c "import pyglet; print(pyglet.input.get_controllers())"
 ```
 
+## Design Patterns
+
+| Pattern | Where | What it is used for |
+|:--------|:------|:--------------------|
+| **MVC** | `GameComponents` + `GameEngine` (model), `Renderers` (view), `IOHandlers` + `GameManager` (controller) | Game logic never draws anything; every component has its own renderer. |
+| **State** | `GameEngine/GameStates` | Menu, ability selection, playing, row clearing, game over… `GameManager` forwards input to the current state. |
+| **Command** | `IOHandlers/Commands`, `GameEngine/GameActions` | Keys and controller buttons are mapped to command objects that are executed by the game. |
+| **Observer** | `GameEngine/GameEvents/event_bus.py` | Score, abilities and sounds react to events (lines cleared, explosion, rewind) without knowing who raised them. |
+| **Decorator** | `PlayStates/AbiliteWrapperStates` | Slow Time, row clearing and rewind wrap the playing state and change its behaviour for a while. |
+| **Singleton** | `IOHandlers/OutputHandlers/audio_handler.py` | One audio handler for the whole game. |
+| **Factory Method** | `MenuOption.create_state()`, `get_renderer()` | Each menu option creates its own next state, each component creates its own renderer. |
+| **Template Method** | `IOHandlers/InputHandlers/input_handler.py` | The press → repeat → release algorithm is shared; keyboard and controller only provide their mapping (`get_command`). |
+| **Prototype** | `Utils/prototype.py`, `clone()` in `TetrisSquare` and `TetrisPiece` | Squares and pieces copy themselves, keeping their class and leaving out render objects. |
+| **Memento** | `src/Mementos` (`GameHistory` is the caretaker) | The board, pieces, holder, piece generator, score and difficulty are saved 20 times per second, which lets **Rewind Time** play the game backwards. |
+
 ## Running Tests
 
-This project uses `pytest` for unit testing. To run the full test suite, execute the following command in the root directory:
+This project uses `pytest` for unit testing (installed with `requirements-dev.txt`). To run the full test suite, execute the following command in the root directory:
 
 ```bash
-pytest
+python -m pytest
 ```
 
 ## Quality Control & Pylint Decisions
