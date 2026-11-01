@@ -12,6 +12,7 @@ from src.MessagingSystem.GameMessages.end_game_message import EndGameMessage
 from src.MessagingSystem.GameMessages.game_state_message import GameStateMessage
 from src.MessagingSystem.messaging_system import MessagingSystem
 from src.Renderers.GameStateRenderers.multiplayer_playing_state_renderer import MultiplayerPlayingStateRenderer
+from src.Mementos.playing_state_memento import PlayingStateMemento
 from src.Renderers.renderer import Renderer
 
 
@@ -31,9 +32,18 @@ class MultiplayerPlayingState(PlayingState):
     def update(self, dt: float, batch: Batch) -> GameState:
         """Updates game logic and sends the current state to the opponent."""
         state = super().update(dt, batch)
+        self.send_state_to_enemy()
+        return state
+
+    def restore(self, memento: "PlayingStateMemento"):
+        """Restores the game and shows the restored board to the opponent right away."""
+        super().restore(memento)
+        self.send_state_to_enemy()
+
+    def send_state_to_enemy(self):
+        """Sends the current board, piece and score to the opponent."""
         message = GameStateMessage.create_message(self.score_board.get_score(), self.board, self.current_piece)
         self.messaging_system.send_message(message)
-        return state
 
     def game_over(self):
         """Signals game over to the opponent and transitions to waiting state."""
