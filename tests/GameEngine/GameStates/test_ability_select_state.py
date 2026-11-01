@@ -20,7 +20,7 @@ def ability_state():
 def test_ability_select_state_initialization(ability_state):
     """Test initial state of ability selection."""
     state, _ = ability_state
-    assert len(state.options) == 4
+    assert len(state.options) == 5
     assert state.cursor_index == 0
     assert state.cols > 0
 
@@ -28,15 +28,13 @@ def test_ability_select_state_initialization(ability_state):
 def test_ability_select_state_navigation(ability_state):
     """Test 2D grid navigation logic in the selection menu."""
     state, _ = ability_state
-    # Assuming 4 options, cols might be 3 or 2.
-    # _calculate_grid_dimensions(16/9) for n=4:
-    # sqrt(4 * 1.77) = sqrt(7.11) approx 2.66 -> cols=3.
-    # rows = ceil(4/3) = 2.
+    # 5 options laid out in 3 columns
     state.cols = 3
+    start = len(state.options)
 
     # [0 1 2]
-    # [3]
-    # [Start] (index 4)
+    # [3 4]
+    # [Start] (index 5)
 
     state.cursor_index = 0
     state.on_move_right()
@@ -49,7 +47,10 @@ def test_ability_select_state_navigation(ability_state):
     assert state.cursor_index == 3
 
     state.on_move_right()
-    assert state.cursor_index == 4  # Start button
+    assert state.cursor_index == 4
+
+    state.on_move_right()
+    assert state.cursor_index == start  # Start button
 
     state.on_move_right()
     assert state.cursor_index == 0  # Back to first
@@ -58,7 +59,7 @@ def test_ability_select_state_navigation(ability_state):
     assert state.cursor_index == 3  # Down from 0 is 3 (cols=3)
 
     state.on_move_down()
-    assert state.cursor_index == 4  # Down from 3 is Start
+    assert state.cursor_index == start  # Down from 3 is Start
 
 
 def test_ability_select_state_selection(ability_state):
@@ -98,7 +99,7 @@ def test_ability_select_state_try_start_game(ability_state):
     state.options[0].is_selected = True
     state.options[1].is_selected = True
 
-    state.cursor_index = 4  # Start button
+    state.cursor_index = len(state.options)  # Start button
     state.on_select_option()
 
     # Verify events pushed: SET_ABILITIES and GET_ABILITIES (from PlayingState init)

@@ -87,6 +87,10 @@ class PlayingStateWrapper(PlayingState):
         """Forwards the wrappable check to the wrapped state."""
         return self._wrapped.is_ability_wrappable()
 
+    def is_enemy_playing(self) -> bool:
+        """Forwards the opponent check to the wrapped state."""
+        return self._wrapped.is_enemy_playing()
+
     def create_memento(self) -> "PlayingStateMemento":
         """Forwards memento creation to the wrapped state."""
         return self._wrapped.create_memento()
@@ -94,6 +98,10 @@ class PlayingStateWrapper(PlayingState):
     def restore(self, memento: "PlayingStateMemento"):
         """Forwards the restore to the wrapped state, so the data lands in the real PlayingState."""
         return self._wrapped.restore(memento)
+
+    def can_rewind(self) -> bool:
+        """Forwards the rewind check to the wrapped state."""
+        return self._wrapped.can_rewind()
 
     def __getattr__(self, name):
         """Forwards attribute access to the wrapped state for any non-overridden attributes."""

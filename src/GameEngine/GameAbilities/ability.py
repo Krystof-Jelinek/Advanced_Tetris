@@ -51,5 +51,10 @@ class Ability(GameComponent, ABC):
         """Return the icon image used to render this ability."""
 
     @abstractmethod
+    def can_execute(self, _game_state: "PlayingState") -> bool:
+        """Returns True if the ability can be applied to the game right now (it stays charged otherwise)."""
+        return True
+
+    @abstractmethod
     def execute(self, game_state: "PlayingState"):
         """Executes the ability effect on the given game state."""

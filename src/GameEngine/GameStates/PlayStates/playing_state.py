@@ -29,9 +29,10 @@ from src.IOHandlers.OutputHandlers.audio_handler import audio_handler
 from src.Renderers.GameStateRenderers.playing_state_renderer import PlayingStateRenderer
 from src.Renderers.renderer import Renderer
 from src.Mementos.playing_state_memento import PlayingStateMemento
+from src.Mementos.Caretakers.game_history import GameHistory
 
 
-# pylint: disable=too-many-public-methods
+# pylint: disable=too-many-public-methods, too-many-instance-attributes
 class PlayingState(GameState):
     """
     Main state for active gameplay, handling pieces, board, and scoring.
@@ -47,7 +48,8 @@ class PlayingState(GameState):
         self.next_piece_hint = NextPieceHint(self.piece_generator.peek_next_piece())
         self.piece_holder = PieceHolder()
         self.shadow_piece_hint = ShadowPieceHint(self.current_piece, self.board)
-        self.ability_system = AbilitySystem(self, self.event_bus)
+        self.ability_system = AbilitySystem(self.event_bus)
+        self.history = GameHistory()
 
         self.event_bus.subscribe(GameEvent.POST_ABILITIES, self.set_active_abilities)
         self.event_bus.subscribe(GameEvent.PIECE_EXPLOSION, self.on_piece_explosion)
@@ -85,6 +87,8 @@ class PlayingState(GameState):
         if self.difficulty.drop_timer >= self.difficulty.drop_interval:
             self.difficulty.drop_timer = 0.0
             self.move_current_piece_down()  # this can set a new gamestate
+        if self.next_state is self:
+            self.history.record(dt, self)
         return self.next_state
 
     def move_current_piece_down(self):
@@ -176,7 +180,7 @@ class PlayingState(GameState):
     def on_use_ability(self, ability_index: int):
         """Triggers an ability by its index."""
         ability = self.ability_system.get_ability(ability_index)
-        self.ability_system.resolve_ability(ability)
+        self.ability_system.resolve_ability(ability, self)
 
     def on_piece_explosion(self, _data):
         """Handles a piece explosion, marking surrounding clearable squares for removal."""
@@ -223,6 +227,10 @@ class PlayingState(GameState):
         """Returns the currently active Tetris piece."""
         return self.current_piece
 
+    def get_history(self) -> GameHistory:
+        """Returns the caretaker holding the recent mementos of this game."""
+        return self.history
+
     def get_ability_system(self):
         """Returns the ability system manager."""
         return self.ability_system
@@ -248,6 +256,14 @@ class PlayingState(GameState):
     def is_ability_wrappable(self) -> bool:
         """Indicates that this state can be wrapped for ability effects."""
         return True
+
+    def is_enemy_playing(self) -> bool:
+        """Single player has no opponent."""
+        return False
+
+    def can_rewind(self) -> bool:
+        """Returns True if there is recorded history to rewind."""
+        return len(self.history) > 0
 
     def create_memento(self) -> PlayingStateMemento:
         """Memento: saves the whole game by collecting the mementos of its components."""

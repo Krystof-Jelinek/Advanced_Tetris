@@ -11,6 +11,7 @@ from src.GameEngine.GameAbilities.bomb_piece_ability import BombPieceAbility
 from src.GameEngine.GameAbilities.garbage_lines_enemy_ability import GarbageLinesEnemyAbility
 from src.GameEngine.GameAbilities.slow_time_ability import SlowTimeAbility
 from src.GameEngine.GameAbilities.speed_up_enemy_time_ability import SpeedUpEnemyTimeAbility
+from src.GameEngine.GameAbilities.rewind_time_ability import RewindTimeAbility
 
 from src.GameEngine.GameEvents.events import GameEvent
 from src.GameEngine.GameStates.Menus.MenuOptions.ability_select_option import AbilitySelectOption
@@ -42,6 +43,7 @@ class AbilitySelectState(GameState):
             AbilitySelectOption(SpeedUpEnemyTimeAbility),
             AbilitySelectOption(BombPieceAbility),
             AbilitySelectOption(GarbageLinesEnemyAbility),
+            AbilitySelectOption(RewindTimeAbility),
         ]
 
         # Calculate dynamic grid dimensions (Columns, Rows)

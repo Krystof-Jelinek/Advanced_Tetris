@@ -28,6 +28,10 @@ class BombPieceAbility(Ability):
         """Initializes the bomb piece ability with its price."""
         super().__init__(line_price=3)
 
+    def can_execute(self, game_state: "PlayingState") -> bool:
+        """A bomb cannot be turned into a bomb again."""
+        return not isinstance(game_state.get_current_piece(), BombPiece)
+
     def execute(self, game_state: "PlayingState"):
         """Replaces the current piece in the game state with a BombPiece."""
         game_state.set_current_piece(BombPiece(center_row=config.board_rows, center_col=int(config.board_cols/2)))

@@ -28,6 +28,10 @@ class SpeedUpEnemyTimeAbility(Ability):
         """Initializes the speed up enemy time ability with its price."""
         super().__init__(line_price=4)
 
+    def can_execute(self, game_state: "PlayingState") -> bool:
+        """Attacks need an opponent who is still playing."""
+        return game_state.is_enemy_playing()
+
     def execute(self, game_state: "PlayingState"):
         """Sends a SpeedUpTimeMessage through the event bus."""
         event_bus = game_state.get_event_bus()

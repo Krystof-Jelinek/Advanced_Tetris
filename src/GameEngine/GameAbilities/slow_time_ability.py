@@ -27,10 +27,12 @@ class SlowTimeAbility(Ability):
         """Initializes the slow time ability with its price."""
         super().__init__(line_price=3)
 
+    def can_execute(self, game_state: "PlayingState") -> bool:
+        """Slow Time wraps the game state, so the state has to allow being wrapped."""
+        return game_state.is_ability_wrappable()
+
     def execute(self, game_state: "PlayingState"):
         """Wraps the game state with a TimeSpeedModificationState to slow down time."""
-        if not game_state.is_ability_wrappable():
-            return
         # pylint: disable=import-outside-toplevel
         from src.GameEngine.GameStates.PlayStates.AbiliteWrapperStates.time_speed_modification_state import \
             TimeSpeedModificationState

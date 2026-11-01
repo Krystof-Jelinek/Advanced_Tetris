@@ -38,6 +38,7 @@ class AudioHandler:
         self.event_bus = bus
         self.event_bus.subscribe(GameEvent.PIECE_EXPLOSION, self.explosion_sound)
         self.event_bus.subscribe(GameEvent.LINES_CLEARED, self.line_clear_sound)
+        self.event_bus.subscribe(GameEvent.TIME_REWIND, self.time_rewind_sound)
 
     def line_clear_sound(self, _data):
         """Plays the line clear sound effect."""
@@ -47,6 +48,10 @@ class AudioHandler:
         """Plays the explosion sound effect."""
         self.play_sound("resources/explosion_sound.wav")
         self.play_sound("resources/wilhelm_scream.wav")
+
+    def time_rewind_sound(self, _data):
+        """Plays the time rewind sound."""
+        self.play_sound("resources/rewind_time_sound.wav")
 
     def play_sound(self, path):
         """Loads and plays a sound effect from the specified path."""

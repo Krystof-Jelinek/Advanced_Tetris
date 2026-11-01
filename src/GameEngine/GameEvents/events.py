@@ -15,3 +15,4 @@ class GameEvent(Enum):
     GET_ABILITIES = "get_abilities"
     POST_ABILITIES = "post_abilities"
     PIECE_EXPLOSION = "piece_explosion"
+    TIME_REWIND = "time_rewind"

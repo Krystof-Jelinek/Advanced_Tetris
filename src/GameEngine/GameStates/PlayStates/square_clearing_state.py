@@ -110,3 +110,7 @@ class SquareClearingState(PlayingStateWrapper):
     def eval_piece_drop(self):
         """Forwards piece drop evaluation to the wrapped state."""
         return self._wrapped.eval_piece_drop()
+
+    def can_rewind(self) -> bool:
+        """Rows are being cleared right now, the rewind has to wait until they are gone."""
+        return False

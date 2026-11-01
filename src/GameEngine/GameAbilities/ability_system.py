@@ -19,9 +19,8 @@ class AbilitySystem(GameComponent):
     """
     Manages active abilities, their charging, and execution.
     """
-    def __init__(self, game_state: "PlayingState", event_bus: "EventBus") -> None:
+    def __init__(self, event_bus: "EventBus") -> None:
         """Initializes the ability system with game state and event bus subscriptions."""
-        self.game_state = game_state
         self.active_abilities: list[Ability] = []
 
         # EVENTS
@@ -29,10 +28,10 @@ class AbilitySystem(GameComponent):
         self.event_bus.subscribe(GameEvent.LINES_CLEARED, self.on_lines_cleared)
         self.event_bus.subscribe(GameEvent.POST_ABILITIES, self.set_active_abilities)
 
-    def resolve_ability(self, ability: Ability):
+    def resolve_ability(self, ability: Ability, game_state: "PlayingState"):
         """Executes the given ability if it's usable."""
-        if ability.is_usable():
-            ability.execute(self.game_state)
+        if ability.is_usable() and ability.can_execute(game_state):
+            ability.execute(game_state)
             ability.set_usable(False)
 
     def on_lines_cleared(self, data: dict):
